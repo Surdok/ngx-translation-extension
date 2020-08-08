@@ -5,8 +5,8 @@ An extension that aims to help developers generate translation strings/localize 
 ## Features
 
 1. Auto translation of HTML strings as shown in the gif below
-![Sample translation for HTML files](https://github.com/Surdok/ngx-translation-extension/blob/master/assets/images/sample.gif)
-![Translating multiple lines of strings using multi cursor](https://github.com/Surdok/ngx-translation-extension/blob/master/assets/images/sample2.gif)
+![Sample translation for HTML files](https://raw.githubusercontent.com/Surdok/ngx-translation-extension/master/assets/images/sample.gif)
+![Translating multiple lines of strings using multi cursor](https://raw.githubusercontent.com/Surdok/ngx-translation-extension/master/assets/images/sample2.gif)
 
 2. Auto translate strings using a google key and automatically add them to the .JSON files
 
