@@ -15,7 +15,7 @@ An extension that aims to help developers generate translation strings/localize 
 This extension contributes the following settings:
 
 * `ngx-translation-extension.autoFileModify`: Automatically modifies transilation files that are specified in the extension settings.
-* `ngx-translation-extension.languageFrom``: The source language to be translated from.
-* `ngx-translation-extension.languageTo``: The target language to be translated to.
-* `ngx-translation-extension.googleAPIKey``: Specify a google API key in order to add google translations to the target language. Leave empty to paste the selected text to the target translated file key as it is.
+* `ngx-translation-extension.languageFrom`: The source language to be translated from.
+* `ngx-translation-extension.languageTo`: The target language to be translated to.
+* `ngx-translation-extension.googleAPIKey`: Specify a google API key in order to add google translations to the target language. Leave empty to paste the selected text to the target translated file key as it is.
 
