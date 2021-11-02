@@ -24,17 +24,15 @@ function createTranslationAssets(dir: string) {
 		fs.writeFileSync(fromPath, JSON.stringify({}));
 	}
 
-	const toPath = dir + settings.languageTo + '.json';
-	if (!fs.existsSync(toPath)) {
-		console.log('Creating the source language to be translated to.');
-		fs.writeFileSync(toPath, JSON.stringify({}));
-	}
-}
+	const targetLanguages = settings.languageTo.split(',');
 
-function getNumberofLine(sourceString: string, string: string): number {
-	const pos = sourceString.indexOf(string);
-	const tempString = sourceString.substring(0, pos);
-	return tempString.split("\n").length;
+	targetLanguages.forEach(language => {
+		const toPath = dir + language + '.json';
+		if (!fs.existsSync(toPath)) {
+			console.log('Creating the source language to be translated to : ' + toPath);
+			fs.writeFileSync(toPath, JSON.stringify({}));
+		}
+	});
 }
 
 /**
@@ -47,34 +45,38 @@ function addGoogleTranslations(arr: {
 	fromString: string;
 }[]) {
 
-	const fileTo = vscode.window.activeTextEditor?.document.uri.fsPath.split("src")[0] + "src/assets/i18n/" + settings.languageTo + ".json";
-	const toObj = jsonfile.readFileSync(fileTo);
-	let googleTranslate = require("google-translate")(settings.googleAPIKey);
+	const targetLanguages = settings.languageTo.split(',');
 
-	googleTranslate.translate(arr.map(e => e.fromString), settings.languageTo, (err: any, translation: any) => {
-		if (err) {
-			const apiErrorMessage =
-				err &&
-				err.body &&
-				JSON.parse(err.body) &&
-				JSON.parse(err.body).error &&
-				JSON.parse(err.body).error.message;
-			return vscode.window.showErrorMessage(apiErrorMessage);
-		}
-		if (typeof translation === 'object' && arr.length === 1) {
-			const translatedText = translation.translatedText;
-			toObj[arr[0].key!] = translatedText;
-		} else {
-			const translations: string[] = translation.map((e: any) => e.translatedText);
-			arr.forEach((v, i) => {
-				toObj[v.key!] = translations[i];
-			});
-		}
-		jsonfile.writeFileSync(fileTo, toObj);
+	targetLanguages.forEach(target => {
+		const fileTo = vscode.window.activeTextEditor?.document.uri.fsPath.split("src")[0] + "src/assets/i18n/" + target + ".json";
+		const toObj = jsonfile.readFileSync(fileTo);
+		let googleTranslate = require("google-translate")(settings.googleAPIKey);
 
-		vscode.window.showInformationMessage("Text translated successfully!");
-	}
-	);
+		googleTranslate.translate(arr.map(e => e.fromString), target, (err: any, translation: any) => {
+			if (err) {
+				const apiErrorMessage =
+					err &&
+					err.body &&
+					JSON.parse(err.body) &&
+					JSON.parse(err.body).error &&
+					JSON.parse(err.body).error.message;
+				return vscode.window.showErrorMessage(apiErrorMessage);
+			}
+			if (typeof translation === 'object' && arr.length === 1) {
+				const translatedText = translation.translatedText;
+				toObj[arr[0].key!] = translatedText;
+			} else {
+				const translations: string[] = translation.map((e: any) => e.translatedText);
+				arr.forEach((v, i) => {
+					toObj[v.key!] = translations[i];
+				});
+			}
+			jsonfile.writeFileSync(fileTo, toObj);
+
+			vscode.window.showInformationMessage("Text translated successfully!");
+		}
+		);
+	});
 }
 
 export function activate(context: vscode.ExtensionContext) {
@@ -107,7 +109,6 @@ async function translate(tsfile = false) {
 			fromString: string;
 		}[] = [];
 		const fileFrom = jsonDirectory + settings.languageFrom + ".json";
-		const fileTo = jsonDirectory + settings.languageTo + ".json";
 
 		editor.selections.forEach(async selection => {
 			const selectedText = editor.document.getText(selection);
@@ -133,11 +134,7 @@ async function translate(tsfile = false) {
 
 				const pathSeperator = editor.document.uri.fsPath.includes('/') ? '/' : '\\';
 				const temp = editor.document.fileName.split(pathSeperator);
-				const temp2 = temp[temp.length - 1].split('.');
-				const fileExtension = temp2[temp2.length - 1];
 
-
-				// if (fileExtension === 'html') {
 				let translation = '';
 				if (tsfile) {
 					translation = `${key}`;
@@ -146,19 +143,6 @@ async function translate(tsfile = false) {
 				}
 
 				builder.replace(selection, translation);
-				// }
-
-				// else if (fileExtension === 'ts') {
-				// 	const docText = editor.document.getText();
-
-				// 	// Case where ngOnInit is not found
-				// 	if (docText.indexOf('implements OnInit') === -1) {
-				// 		const newDocText = docText.replace(/(export class \w+Component )/, '$&implements OnInit');
-
-				// 		builder.replace(new vscode.Range(0, 0, editor.document.lineCount + 1, 0), newDocText);
-				// 	}
-				// }
-
 
 			} else {
 				const listStrings = editor.selections.map(e => editor.document.getText(e).toUpperCase().replace(/ /g, "_").replace(/\W*/g, "")).join('\n');
@@ -176,12 +160,20 @@ async function translate(tsfile = false) {
 		if (settings.googleAPIKey !== "") {
 			addGoogleTranslations(constructedArray);
 		} else {
-			const toObj = jsonfile.readFileSync(fileTo);
 
-			constructedArray.forEach(ele => {
-				toObj[ele.key!] = ele.fromString;
-				jsonfile.writeFileSync(fileTo, toObj);
+			const targetLanguages = settings.languageTo.split(',');
+
+			targetLanguages.forEach(target => {
+				const fileTo = jsonDirectory + target + ".json";
+				const toObj = jsonfile.readFileSync(fileTo);
+
+				constructedArray.forEach(ele => {
+					toObj[ele.key!] = ele.fromString;
+					jsonfile.writeFileSync(fileTo, toObj);
+				});
 			});
+
+
 
 			vscode.window.showInformationMessage("Google Key was not set. Added un-translated key-values.");
 		}
