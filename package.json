@@ -1,89 +1,94 @@
 {
-	"name": "ngx-translation-extension",
-	"displayName": "ngx-translation-extension",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/Surdok/ngx-translation-extension.git"
-	},
-	"publisher": "Surdok",
-	"description": "An Extension that helps the user generating translation strings, and adding them automatically to the corresponding .json files in the project directory, assuming that the user uses ngx-translate/core to localize the project that is being worked on.",
-	"version": "1.0.0",
-	"engines": {
-		"vscode": "^1.46.0"
-	},
-	"categories": [
-		"Other"
-	],
-	"activationEvents": [
-		"onCommand:ngx-translation-extension.translateHTML",
-		"onCommand:ngx-translation-extension.translateTS"
-	],
-	"main": "./out/extension.js",
-	"contributes": {
-		"commands": [
-			{
-				"command": "ngx-translation-extension.translateHTML",
-				"title": "Translate selected string in an HTML file"
-			},
-			{
-				"command": "ngx-translation-extension.translateTS",
-				"title": "Translate selected string in an TS (Code) file"
-			}
-		],
-		"configuration": {
-			"type": "string",
-			"title": "ngx-translation-extension configuration",
-			"properties": {
-				"ngx-translation-extension.autoFileModify": {
-					"type": "boolean",
-					"default": true,
-					"description": "Automatically modifies transilation files that are specified in the extension settings."
-				},
-				"ngx-translation-extension.languageFrom": {
-					"type": "string",
-					"default": "en",
-					"description": "The source language to be translated from."
-				},
-				"ngx-translation-extension.languageTo": {
-					"type": "string",
-					"default": "ar",
-					"description": "The target language to be translated to."
-				},
-				"ngx-translation-extension.googleAPIKey": {
-					"type": "string",
-					"default": "",
-					"description": "Specify a google API key in order to add google translations to the target language. Leave empty to paste the selected text to the target translated file key as it is."
-				}
-			}
-		}
-	},
-	"scripts": {
-		"vscode:prepublish": "npm run compile",
-		"compile": "tsc -p ./",
-		"lint": "eslint src --ext ts",
-		"watch": "tsc -watch -p ./",
-		"pretest": "npm run compile && npm run lint",
-		"test": "node ./out/test/runTest.js",
-		"package": "vsce package"
-	},
-	"devDependencies": {
-		"@types/copy-paste": "^1.1.30",
-		"@types/glob": "^7.1.1",
-		"@types/mocha": "^7.0.2",
-		"@types/node": "^13.11.0",
-		"@types/vscode": "^1.46.0",
-		"@typescript-eslint/eslint-plugin": "^2.30.0",
-		"@typescript-eslint/parser": "^2.30.0",
-		"eslint": "^6.8.0",
-		"glob": "^7.1.6",
-		"mocha": "^7.1.2",
-		"typescript": "^3.8.3",
-		"vscode-test": "^1.3.0"
-	},
-	"dependencies": {
-		"@types/jsonfile": "^6.0.0",
-		"copy-paste": "^1.3.0",
-		"google-translate": "^3.0.0",
-		"jsonfile": "^6.0.1"
-	}
+  "name": "ngx-translation-extension",
+  "displayName": "ngx-translation-extension",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Surdok/ngx-translation-extension.git"
+  },
+  "publisher": "Surdok",
+  "description": "An Extension that helps the user generating translation strings, and adding them automatically to the corresponding .json files in the project directory, assuming that the user uses ngx-translate/core to localize the project that is being worked on.",
+  "version": "1.0.0",
+  "engines": {
+    "vscode": "^1.46.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:ngx-translation-extension.translateHTML",
+    "onCommand:ngx-translation-extension.translateTS"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "ngx-translation-extension.translateHTML",
+        "title": "Translate selected string in an HTML file"
+      },
+      {
+        "command": "ngx-translation-extension.translateTS",
+        "title": "Translate selected string in an TS (Code) file"
+      }
+    ],
+    "configuration": {
+      "type": "string",
+      "title": "ngx-translation-extension configuration",
+      "properties": {
+        "ngx-translation-extension.autoFileModify": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically modifies transilation files that are specified in the extension settings."
+        },
+        "ngx-translation-extension.languageFrom": {
+          "type": "string",
+          "default": "en",
+          "description": "The source language to be translated from."
+        },
+        "ngx-translation-extension.languageTo": {
+          "type": "string",
+          "default": "ar",
+          "description": "The target language to be translated to. (supports multiple targeted languages such as ar,es,fr)"
+        },
+        "ngx-translation-extension.googleAPIKey": {
+          "type": "string",
+          "default": "",
+          "description": "Specify a google API key in order to add google translations to the target language. Leave empty to paste the selected text to the target translated file key as it is."
+        },
+        "ngx-translation-extension.JSONDirectory": {
+          "type": "string",
+          "default": "src/assets/i18n/",
+          "description": "Path where to find the translation JSON Files"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "lint": "eslint src --ext ts",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "test": "node ./out/test/runTest.js",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/copy-paste": "^1.1.30",
+    "@types/glob": "^7.1.1",
+    "@types/mocha": "^7.0.2",
+    "@types/node": "^13.11.0",
+    "@types/vscode": "^1.46.0",
+    "@typescript-eslint/eslint-plugin": "^2.30.0",
+    "@typescript-eslint/parser": "^2.30.0",
+    "eslint": "^6.8.0",
+    "glob": "^7.1.6",
+    "mocha": "^7.1.2",
+    "typescript": "^3.8.3",
+    "vscode-test": "^1.3.0"
+  },
+  "dependencies": {
+    "@types/jsonfile": "^6.0.0",
+    "copy-paste": "^1.3.0",
+    "google-translate": "^3.0.0",
+    "jsonfile": "^6.0.1"
+  }
 }

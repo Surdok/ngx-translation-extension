@@ -48,7 +48,19 @@ function addGoogleTranslations(arr: {
 	const targetLanguages = settings.languageTo.split(',');
 
 	targetLanguages.forEach(target => {
-		const fileTo = vscode.window.activeTextEditor?.document.uri.fsPath.split("src")[0] + "src/assets/i18n/" + target + ".json";
+
+		let WorkingFolder = '';
+
+		if (vscode.workspace.workspaceFolders) {
+			WorkingFolder = vscode.workspace.workspaceFolders[0].uri.fsPath;
+		} else {
+			vscode.window.showWarningMessage("Couldn't find opened workspace directory.");
+			return;
+		}
+
+		const jsonDirectory = WorkingFolder + '\\' + settings.JSONDirectory;
+
+		const fileTo = jsonDirectory + target + ".json";
 		const toObj = jsonfile.readFileSync(fileTo);
 		let googleTranslate = require("google-translate")(settings.googleAPIKey);
 
@@ -98,8 +110,24 @@ async function translate(tsfile = false) {
 		vscode.window.showWarningMessage("Select text to translate");
 		return;
 	}
-	const jsonDirectory = editor.document.uri.fsPath.split("src")[0] + "src/assets/i18n/";
-	let googleTranslate = require("google-translate")(settings.googleAPIKey);
+
+	let WorkingFolder = '';
+
+	if (vscode.workspace.workspaceFolders) {
+		WorkingFolder = vscode.workspace.workspaceFolders[0].uri.fsPath;
+	} else {
+		vscode.window.showWarningMessage("Couldn't find opened workspace directory.");
+		return;
+	}
+
+	const oldDirectory = editor.document.uri.fsPath.split("src")[0] + "src/assets/i18n/";
+
+	// console.log(WorkingFolder);
+	// TODO: Handle linux pathing..
+
+	const jsonDirectory = WorkingFolder + '\\' + settings.JSONDirectory;
+
+
 
 	createTranslationAssets(jsonDirectory);
 	await editor.edit(async (builder) => {
@@ -130,10 +158,9 @@ async function translate(tsfile = false) {
 						"Key was already found! No files was modified during the process."
 					);
 				}
-				console.log(editor.document.uri.fsPath);
+
 
 				const pathSeperator = editor.document.uri.fsPath.includes('/') ? '/' : '\\';
-				const temp = editor.document.fileName.split(pathSeperator);
 
 				let translation = '';
 				if (tsfile) {
@@ -173,8 +200,6 @@ async function translate(tsfile = false) {
 				});
 			});
 
-
-
 			vscode.window.showInformationMessage("Google Key was not set. Added un-translated key-values.");
 		}
 	}).then((e) => {
@@ -192,4 +217,5 @@ interface Settings {
 	languageFrom: string;
 	languageTo: string;
 	googleAPIKey: string;
+	JSONDirectory: string;
 }
