@@ -58,6 +58,11 @@
           "type": "string",
           "default": "src/assets/i18n/",
           "description": "Path where to find the translation JSON Files"
+        },
+        "ngx-translation-extension.TranslationWrappingHTML": {
+          "type": "string",
+          "default": "{{'$key' | translate }}",
+          "description": "Surrounds stored key of translated string by pipe/statement etc.. $key is required for this option to work."
         }
       }
     }

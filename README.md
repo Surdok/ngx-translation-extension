@@ -14,6 +14,7 @@ An extension that aims to help developers generate translation strings/localize 
 
 This extension contributes the following settings:
 
+- `ngx-translation-extension.TranslationWrappingHTML`: Surrounds stored key of translated string by pipe/statement etc.. $key is required for this option to work.
 - `ngx-translation-extension.JSONDirectory`: Directory to find the translation files in
 - `ngx-translation-extension.autoFileModify`: Automatically modifies transilation files that are specified in the extension settings.
 - `ngx-translation-extension.languageFrom`: The source language to be translated from.

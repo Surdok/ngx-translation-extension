@@ -120,9 +120,6 @@ async function translate(tsfile = false) {
 		return;
 	}
 
-	const oldDirectory = editor.document.uri.fsPath.split("src")[0] + "src/assets/i18n/";
-
-	// console.log(WorkingFolder);
 	// TODO: Handle linux pathing..
 
 	const jsonDirectory = WorkingFolder + '\\' + settings.JSONDirectory;
@@ -159,14 +156,14 @@ async function translate(tsfile = false) {
 					);
 				}
 
-
-				const pathSeperator = editor.document.uri.fsPath.includes('/') ? '/' : '\\';
+				// TODO: Good idea for switching between different os pathings..
+				// const pathSeperator = editor.document.uri.fsPath.includes('/') ? '/' : '\\';
 
 				let translation = '';
 				if (tsfile) {
 					translation = `${key}`;
 				} else {
-					translation = `{{'${key}' | translate }}`;
+					translation = settings.TranslationWrappingHTML.replace('$key', key);
 				}
 
 				builder.replace(selection, translation);
@@ -218,4 +215,5 @@ interface Settings {
 	languageTo: string;
 	googleAPIKey: string;
 	JSONDirectory: string;
+	TranslationWrappingHTML: string;
 }
