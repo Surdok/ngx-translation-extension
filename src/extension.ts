@@ -83,7 +83,7 @@ function addGoogleTranslations(arr: {
 					toObj[v.key!] = translations[i];
 				});
 			}
-			jsonfile.writeFileSync(fileTo, toObj);
+			jsonfile.writeFileSync(fileTo, toObj, { spaces: 2 });
 
 			vscode.window.showInformationMessage("Text translated successfully!");
 		}
@@ -145,7 +145,7 @@ async function translate(tsfile = false) {
 				const obj = jsonfile.readFileSync(fileFrom);
 				if (!Object.keys(obj).includes(key!)) {
 					obj[key!] = selectedText;
-					jsonfile.writeFileSync(fileFrom, obj);
+					jsonfile.writeFileSync(fileFrom, obj, { spaces: 2 });
 					constructedArray.push({
 						key,
 						fromString: selectedText
@@ -193,7 +193,7 @@ async function translate(tsfile = false) {
 
 				constructedArray.forEach(ele => {
 					toObj[ele.key!] = ele.fromString;
-					jsonfile.writeFileSync(fileTo, toObj);
+					jsonfile.writeFileSync(fileTo, toObj, { spaces: 2 });
 				});
 			});
 
