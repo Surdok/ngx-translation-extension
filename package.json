@@ -1,13 +1,14 @@
 {
   "name": "ngx-translation-extension",
-  "displayName": "ngx-translation-extension",
+  "displayName": "Angular Translation",
+  "icon": "images/exticon.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/Surdok/ngx-translation-extension.git"
   },
   "publisher": "Surdok",
   "description": "An Extension that helps the user generating translation strings, and adding them automatically to the corresponding .json files in the project directory, assuming that the user uses ngx-translate/core to localize the project that is being worked on.",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "engines": {
     "vscode": "^1.46.0"
   },
