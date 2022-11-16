@@ -20,3 +20,7 @@ This extension contributes the following settings:
 - `ngx-translation-extension.languageFrom`: The source language to be translated from.
 - `ngx-translation-extension.languageTo`: The target language to be translated to (Now supports multiple targeted languages by passing `ar,es,fr`).
 - `ngx-translation-extension.googleAPIKey`: Specify a google API key in order to add google translations to the target language. Leave empty to paste the selected text to the target translated file key as it is.
+
+## Ideas :
+- Make a presets list so that the user is able to select any preset he defines in the settings
+- Give out an option to search and paste the keys that are read in the json file
