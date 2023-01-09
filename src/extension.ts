@@ -98,6 +98,7 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.commands.registerCommand('ngx-translation-extension.translateHTML', () => translate()),
 		vscode.commands.registerCommand('ngx-translation-extension.translateTS', () => translate(true)),
 		vscode.commands.registerCommand('ngx-translation-extension.translateWithFormats', () => translate(false, true)),
+		vscode.commands.registerCommand('ngx-translation-extension.GetTranslationKey', () => GetTranslationKey()),
 	];
 
 	commands.forEach(v => context.subscriptions.push(v));
@@ -242,4 +243,43 @@ interface Settings {
 	JSONDirectory: string;
 	TranslationWrappingHTML: string;
 	Formats: string[];
+}
+
+function GetTranslationKey() {
+	const editor = vscode.window.activeTextEditor;
+	if (!editor) {
+		vscode.window.showWarningMessage("Select text to translate");
+		return;
+	}
+	let WorkingFolder = '';
+
+	if (vscode.workspace.workspaceFolders) {
+		WorkingFolder = vscode.workspace.workspaceFolders[0].uri.fsPath;
+	} else {
+		vscode.window.showWarningMessage("Couldn't find opened workspace directory.");
+		return;
+	}
+	const jsonDirectory = WorkingFolder + '\\' + settings.JSONDirectory;
+
+	const fileFrom = jsonDirectory + settings.languageFrom + ".json";
+
+	const obj = jsonfile.readFileSync(fileFrom);
+
+
+	let items: vscode.QuickPickItem[] = Object.entries(obj).map(([key, value]) => ({
+		label: key,
+		description: String(value),
+	}));
+
+	vscode.window.showQuickPick(items).then(selectionQuickPick => {
+		if (selectionQuickPick) {
+
+			editor.edit((builder) => {
+
+				builder.replace(editor.selection, selectionQuickPick.label);
+			}).then(() => {
+
+			});
+		}
+	});
 }

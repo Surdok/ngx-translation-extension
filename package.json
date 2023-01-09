@@ -34,6 +34,10 @@
       {
         "command": "ngx-translation-extension.translateWithFormats",
         "title": "Translate selected string in a custom format"
+      },
+      {
+        "command": "ngx-translation-extension.GetTranslationKey",
+        "title": "Get Translation Key : Pastes a key from the JSON file (uses the 'from' targeted json file)"
       }
     ],
     "configuration": {
