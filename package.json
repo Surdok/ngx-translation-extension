@@ -17,7 +17,8 @@
   ],
   "activationEvents": [
     "onCommand:ngx-translation-extension.translateHTML",
-    "onCommand:ngx-translation-extension.translateTS"
+    "onCommand:ngx-translation-extension.translateTS",
+    "onCommand:ngx-translation-extension.translateWithFormats"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -29,6 +30,10 @@
       {
         "command": "ngx-translation-extension.translateTS",
         "title": "Translate selected string in an TS (Code) file"
+      },
+      {
+        "command": "ngx-translation-extension.translateWithFormats",
+        "title": "Translate selected string in a custom format"
       }
     ],
     "configuration": {
