@@ -64,6 +64,14 @@
           "type": "string",
           "default": "{{'$key' | translate }}",
           "description": "Surrounds stored key of translated string by pipe/statement etc.. $key is required for this option to work. Example : `{{'$key' | translate }}`"
+        },
+        "ngx-translation-extension.Formats": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true,
+          "description": "Pre-defined multiple list of formats to be used for different cases (e.g html pages, ts or js script files, etcc..)  Example : `{{'$key' | translate }}`"
         }
       }
     }
