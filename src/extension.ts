@@ -107,6 +107,25 @@ export function activate(context: vscode.ExtensionContext) {
 
 
 async function translate(tsfile = false, customFormat = false) {
+
+	let chosenFormat: string = '';
+	if (customFormat) {
+
+		let items: vscode.QuickPickItem[] = settings.Formats.map(str => ({
+			label: str,
+		}));
+
+		const selectionQuickPick = await vscode.window.showQuickPick(items)
+		if (selectionQuickPick) {
+
+			chosenFormat = selectionQuickPick.label;
+		} else {
+			vscode.window.showInformationMessage(
+				`No format was selected. Please select a format for translation.`
+			);
+		}
+	}
+
 	const editor = vscode.window.activeTextEditor;
 	if (!editor) {
 		vscode.window.showWarningMessage("Select text to translate");
@@ -133,102 +152,82 @@ async function translate(tsfile = false, customFormat = false) {
 		fromString: string;
 	}[] = [];
 	const fileFrom = jsonDirectory + settings.languageFrom + ".json";
+	editor.edit((builder) => {
 
-	editor.selections.forEach(async selection => {
-		const selectedText = editor.document.getText(selection);
-		const key = selectedText.toUpperCase().replace(/ /g, "_").replace(/\W*/g, "");
+		editor.selections.forEach(async selection => {
+			const selectedText = editor.document.getText(selection);
+			const key = selectedText.toUpperCase().replace(/ /g, "_").replace(/\W*/g, "");
 
 
-		if (settings.autoFileModify) {
-			// Find if object already in the file, and dont add to the file if key already there
-			const obj = jsonfile.readFileSync(fileFrom);
-			if (!Object.keys(obj).includes(key!)) {
-				obj[key!] = selectedText;
-				jsonfile.writeFileSync(fileFrom, obj, { spaces: 2 });
-				constructedArray.push({
-					key,
-					fromString: selectedText
-				});
-			} else {
-				vscode.window.showInformationMessage(
-					"Key was already found! No files was modified during the process."
-				);
-			}
-
-			// TODO: Good idea for switching between different os pathings..
-			// const pathSeperator = editor.document.uri.fsPath.includes('/') ? '/' : '\\';
-
-			let translation = '';
-			if (tsfile) {
-				translation = `${key}`;
-			} else {
-				if (customFormat) {
-
-					let items: vscode.QuickPickItem[] = settings.Formats.map(str => ({
-						label: str,
-					}));
-
-					vscode.window.showQuickPick(items).then(selectionQuickPick => {
-						if (selectionQuickPick) {
-							editor.edit((builder) => {
-
-								builder.replace(selection, selectionQuickPick.label.replace('$key', key));
-							}).then(() => {
-
-							});
-						} else {
-							translation = editor.document.getText(selection);
-							vscode.window.showInformationMessage(
-								`No format was selected. Please select a format for translation.`
-							);
-						}
+			if (settings.autoFileModify) {
+				// Find if object already in the file, and dont add to the file if key already there
+				const obj = jsonfile.readFileSync(fileFrom);
+				if (!Object.keys(obj).includes(key!)) {
+					obj[key!] = selectedText;
+					jsonfile.writeFileSync(fileFrom, obj, { spaces: 2 });
+					constructedArray.push({
+						key,
+						fromString: selectedText
 					});
-
 				} else {
-					translation = settings.TranslationWrappingHTML.replace('$key', key);
+					vscode.window.showInformationMessage(
+						"Key was already found! No files was modified during the process."
+					);
 				}
-			}
-			if (!customFormat) {
-				editor.edit((builder) => {
-					builder.replace(selection, translation);
-				}).then(() => {
 
-				});
+				// TODO: Good idea for switching between different os pathings..
+				// const pathSeperator = editor.document.uri.fsPath.includes('/') ? '/' : '\\';
 
-			}
+				let translation = '';
+				if (tsfile) {
+					translation = `${key}`;
+				} else {
+					if (customFormat) {
+						translation = chosenFormat.replace('$key', key);
+					} else {
+						translation = settings.TranslationWrappingHTML.replace('$key', key);
+					}
+				}
+				// if (!customFormat) {
+				builder.replace(selection, translation);
 
-		} else {
-			const listStrings = editor.selections.map(e => editor.document.getText(e).toUpperCase().replace(/ /g, "_").replace(/\W*/g, "")).join('\n');
 
-			copypaste.copy(listStrings);
-			vscode.window.showInformationMessage(
-				`No files were modified.
+				// }
+
+			} else {
+				const listStrings = editor.selections.map(e => editor.document.getText(e).toUpperCase().replace(/ /g, "_").replace(/\W*/g, "")).join('\n');
+
+				copypaste.copy(listStrings);
+				vscode.window.showInformationMessage(
+					`No files were modified.
 			Key(s) copied to clipboard.
 			Please enable auto file modification to automatically insert translations to json files.`
-			);
-			return false;
-		}
+				);
+				return false;
+			}
 
-		if (settings.googleAPIKey !== "") {
-			addGoogleTranslations(constructedArray);
-		} else {
+			if (settings.googleAPIKey !== "") {
+				addGoogleTranslations(constructedArray);
+			} else {
 
-			const targetLanguages = settings.languageTo.split(',');
+				const targetLanguages = settings.languageTo.split(',');
 
-			targetLanguages.forEach(target => {
-				const fileTo = jsonDirectory + target + ".json";
-				const toObj = jsonfile.readFileSync(fileTo);
+				targetLanguages.forEach(target => {
+					const fileTo = jsonDirectory + target + ".json";
+					const toObj = jsonfile.readFileSync(fileTo);
 
-				constructedArray.forEach(ele => {
-					toObj[ele.key!] = ele.fromString;
-					jsonfile.writeFileSync(fileTo, toObj, { spaces: 2 });
+					constructedArray.forEach(ele => {
+						toObj[ele.key!] = ele.fromString;
+						jsonfile.writeFileSync(fileTo, toObj, { spaces: 2 });
+					});
 				});
-			});
 
-			vscode.window.showInformationMessage("Google Key was not set. Added un-translated key-values.");
-		}
-	})
+				vscode.window.showInformationMessage("Google Key was not set. Added un-translated key-values.");
+			}
+		})
+	}).then(() => {
 
+	});
 
 };
 
